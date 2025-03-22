@@ -1,51 +1,125 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Flores Amarillas &lt;3</title>
-    <link rel="stylesheet" href="Css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital@1&display=swap" rel="stylesheet">
-    <!--
-        Codigo By: MartL7
-    -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flor Amarilla</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at center, #0d0d0d 0%, #1a1a1a 100%);
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .mensaje {
+      position: absolute;
+      top: 40px;
+      width: 100%;
+      text-align: center;
+      color: #fffbe6;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ffeb3b;
+    }
+
+    .mensaje-abajo {
+      position: absolute;
+      bottom: 30px;
+      width: 100%;
+      text-align: center;
+      color: #ffeaea;
+      font-size: 20px;
+      font-style: italic;
+      text-shadow: 0 0 8px #ff80ab;
+    }
+  </style>
 </head>
 <body>
+  <div class="mensaje">Para la niña más bonita</div>
+  <div class="mensaje-abajo">Mi loquita &lt;3</div>
+  <canvas id="canvas"></canvas>
 
-    <div class="Contenedor-Binicio">
-        <button class="Button" id="BVer"> Clicka aqui </button>
-    </div>
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    <div class="Con-Emergente">
-        <div id="resultado" class="cua">
-            <p id="res">
-                Hola, antes de iniciar, solo quiero recordarte que eres 
-                muy especial para mí y gracias por todo. &lt;3
-            </p>    
-            <button id="BotonCerrar" class="Button">Cerrar</button>
-        </div>
-    </div>
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2 + 30;
+    let petals = 12;
+    let petalLength = 100;
+    let animationAngle = 0;
 
-    <div class="Con-2">
-        <h1 id="Titulo"> Elije una Opcion </h1>
-        <div class="Con">
-            <button class="Button" id="B1"> 1 Flor </button>
-            <button class="Button" id="B12"> 12 Flores :) </button>
-        </div>
-    </div>
+    function drawPetal(x, y, angle, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(30, -30, 30, -80, 0, -petalLength);
+      ctx.bezierCurveTo(-30, -80, -30, -30, 0, 0);
+      ctx.fillStyle = color;
+      ctx.shadowColor = "#ffcc80";
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.restore();
+    }
 
-    <main class="Contenedor">
-        <canvas id="Flor" class="Flor" width="800" height="600"></canvas>
+    function drawFlower() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let baseColor = "hsl(45, 100%, 70%)";
 
-        <div class="Texto">
-            <h2 id="Text">Para la niña mas Linda del Mundo.</h2>
-        </div>
+      for (let i = 0; i < petals; i++) {
+        const angle = (Math.PI * 2 / petals) * i + animationAngle;
+        drawPetal(centerX, centerY, angle, baseColor);
+      }
 
-    </main>
+      // Centro
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+      ctx.fillStyle = "#a0522d";
+      ctx.shadowColor = "#ffeb3b";
+      ctx.shadowBlur = 25;
+      ctx.fill();
 
-    <script src="Js/app.js"></script>
-    <script src="Js/Dis.js"></script>
+      // Tallo
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY + 30);
+      ctx.lineTo(centerX, centerY + 200);
+      ctx.strokeStyle = "#4caf50";
+      ctx.lineWidth = 12;
+      ctx.shadowColor = "#66bb6a";
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+
+      // Hoja
+      ctx.save();
+      ctx.translate(centerX + 10, centerY + 120);
+      ctx.rotate(Math.PI / 4);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(40, -20, 0, -40);
+      ctx.quadraticCurveTo(-30, -20, 0, 0);
+      ctx.fillStyle = "#81c784";
+      ctx.shadowColor = "#66bb6a";
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animate() {
+      animationAngle += 0.003;
+      drawFlower();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
