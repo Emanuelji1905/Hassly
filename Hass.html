@@ -1,118 +1,125 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flor Amarilla</title>
   <style>
     body {
       margin: 0;
-      background-color: black;
+      background: radial-gradient(ellipse at center, #0d0d0d 0%, #1a1a1a 100%);
       overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
     }
+
     canvas {
       display: block;
-      margin: 0 auto;
+    }
+
+    .mensaje {
+      position: absolute;
+      top: 40px;
+      width: 100%;
+      text-align: center;
+      color: #fffbe6;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ffeb3b;
+    }
+
+    .mensaje-abajo {
+      position: absolute;
+      bottom: 30px;
+      width: 100%;
+      text-align: center;
+      color: #ffeaea;
+      font-size: 20px;
+      font-style: italic;
+      text-shadow: 0 0 8px #ff80ab;
     }
   </style>
 </head>
 <body>
-  <canvas id="florCanvas"></canvas>
+  <div class="mensaje">Para la niña más bonita</div>
+  <div class="mensaje-abajo">Te amo mi Hass <3 &lt;3</div>
+  <canvas id="canvas"></canvas>
 
   <script>
-    const canvas = document.getElementById("florCanvas");
+    const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    function drawPetal(x, y, radius, angle, color) {
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2 + 30;
+    let petals = 12;
+    let petalLength = 100;
+    let animationAngle = 0;
+
+    function drawPetal(x, y, angle, color) {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(angle);
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(radius, -radius, 0, -radius * 2);
-      ctx.quadraticCurveTo(-radius, -radius, 0, 0);
+      ctx.bezierCurveTo(30, -30, 30, -80, 0, -petalLength);
+      ctx.bezierCurveTo(-30, -80, -30, -30, 0, 0);
       ctx.fillStyle = color;
+      ctx.shadowColor = "#ffcc80";
+      ctx.shadowBlur = 15;
       ctx.fill();
       ctx.restore();
     }
 
-    function drawFlower(x, y) {
-      let petals = 18;
-      for (let j = 0; j < 16; j++) {
-        for (let i = 0; i < petals; i++) {
-          const angle = (Math.PI * 2 / petals) * i;
-          drawPetal(x, y, 25, angle, "hsl(45, 100%, 50%)");
-        }
+    function drawFlower() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let baseColor = "hsl(45, 100%, 70%)";
+
+      for (let i = 0; i < petals; i++) {
+        const angle = (Math.PI * 2 / petals) * i + animationAngle;
+        drawPetal(centerX, centerY, angle, baseColor);
       }
 
-      // Semillas del centro
-      for (let i = 0; i < 200; i++) {
-        const phi = 137.508 * (Math.PI / 180);
-        const r = 4 * Math.sqrt(i);
-        const theta = i * phi;
-        const x1 = x + r * Math.cos(theta);
-        const y1 = y + r * Math.sin(theta);
-        ctx.beginPath();
-        ctx.arc(x1, y1, 2, 0, 2 * Math.PI);
-        ctx.fillStyle = "brown";
-        ctx.fill();
-      }
-    }
-
-    function drawStem(x, y) {
+      // Centro
       ctx.beginPath();
+      ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+      ctx.fillStyle = "#a0522d";
+      ctx.shadowColor = "#ffeb3b";
+      ctx.shadowBlur = 25;
+      ctx.fill();
+
+      // Tallo
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY + 30);
+      ctx.lineTo(centerX, centerY + 200);
+      ctx.strokeStyle = "#4caf50";
       ctx.lineWidth = 12;
-      ctx.strokeStyle = "hsl(100, 100%, 30%)";
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y + 200);
+      ctx.shadowColor = "#66bb6a";
+      ctx.shadowBlur = 10;
       ctx.stroke();
 
       // Hoja
+      ctx.save();
+      ctx.translate(centerX + 10, centerY + 120);
+      ctx.rotate(Math.PI / 4);
       ctx.beginPath();
-      ctx.fillStyle = "hsl(100, 80%, 40%)";
-      ctx.moveTo(x, y + 160);
-      ctx.quadraticCurveTo(x + 60, y + 100, x + 20, y + 60);
-      ctx.quadraticCurveTo(x - 30, y + 100, x, y + 160);
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(40, -20, 0, -40);
+      ctx.quadraticCurveTo(-30, -20, 0, 0);
+      ctx.fillStyle = "#81c784";
+      ctx.shadowColor = "#66bb6a";
+      ctx.shadowBlur = 12;
       ctx.fill();
+      ctx.restore();
     }
 
-    function drawStars(amount) {
-      for (let i = 0; i < amount; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(Math.random() * Math.PI);
-        ctx.beginPath();
-        ctx.moveTo(0, -5);
-        for (let j = 0; j < 5; j++) {
-          ctx.lineTo(5 * Math.cos((j * 4 * Math.PI) / 5), 5 * Math.sin((j * 4 * Math.PI) / 5));
-        }
-        ctx.closePath();
-        ctx.fillStyle = "white";
-        ctx.fill();
-        ctx.restore();
-      }
+    function animate() {
+      animationAngle += 0.003;
+      drawFlower();
+      requestAnimationFrame(animate);
     }
 
-    function drawText() {
-      ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("Para la niña más bonita", canvas.width / 2, 80);
-      ctx.fillText("Te amo mi Hass <3", canvas.width / 2, canvas.height - 50);
-    }
-
-    function drawAll() {
-      drawStars(60);
-      drawStem(canvas.width / 2, canvas.height / 2 - 50);
-      drawFlower(canvas.width / 2, canvas.height / 2 - 50);
-      drawText();
-    }
-
-    drawAll();
+    animate();
   </script>
 </body>
 </html>
